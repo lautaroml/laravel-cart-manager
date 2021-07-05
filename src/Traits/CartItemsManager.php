@@ -16,7 +16,32 @@ trait CartItemsManager
      * @param int Quantity
      * @return array
      */
-    public function add($entity, $quantity)
+    public function add($entity, $quantity, $customAttributes = [])
+    {
+        if ($this->itemExists($entity, $customAttributes)) {
+
+            $cartItemIndex = $this->items->search($this->cartItemsCheck($entity, $customAttributes));
+
+            return $this->incrementQuantityAt($cartItemIndex, $quantity);
+        }
+
+        $entity->custom_attributes = $customAttributes;
+
+        $this->items->push(CartItem::createFrom($entity, $quantity));
+
+        event(new CartItemAdded($entity));
+
+        return $this->cartUpdates($isNewItem = true);
+    }
+
+    /**
+     * Adds an item to the cart from un Array.
+     *
+     * @param array ItemArray
+     * @param int Quantity
+     * @return array
+     */
+    public function addFromArray($itemArray, $quantity, $customAttributes = [])
     {
         if ($this->itemExists($entity)) {
             $cartItemIndex = $this->items->search($this->cartItemsCheck($entity));
@@ -37,9 +62,9 @@ trait CartItemsManager
      * @param Illuminate\Database\Eloquent\Model
      * @return bool
      */
-    protected function itemExists($entity)
+    protected function itemExists($entity, $customAttributes = [])
     {
-        return $this->items->contains($this->cartItemsCheck($entity));
+        return $this->items->contains($this->cartItemsCheck($entity, $customAttributes));
     }
 
     /**
@@ -48,11 +73,12 @@ trait CartItemsManager
      * @param Illuminate\Database\Eloquent\Model
      * @return \Closure
      */
-    protected function cartItemsCheck($entity)
+    protected function cartItemsCheck($entity, $customAttributes = [])
     {
-        return function ($item) use ($entity) {
+        return function ($item) use ($entity, $customAttributes) {
             return $item->modelType == get_class($entity) &&
-                $item->modelId == $entity->{$entity->getKeyName()}
+                $item->modelId == $entity->{$entity->getKeyName()} &&
+                $item->customAttributes == json_encode($customAttributes)
             ;
         };
     }
