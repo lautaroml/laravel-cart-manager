@@ -101,4 +101,69 @@ class CartItemsTest extends TestCase
 
         $this->assertTrue(cart()->isEmpty());
     }
+
+    /** @test */
+    public function add_new_cart_item_with_custom_attributes()
+    {
+        $testProduct = factory(TestProduct::class)->create();
+
+        $cart = TestProduct::addToCart($testProduct->id, 5, [
+            'foo' => 'bar'
+        ]);
+
+        $this->assertCount(1, $cart['items']);
+
+        $this->assertArrayHasKey('customAttributes', $cart['items'][0]);
+    }
+
+
+    /** @test */
+    public function add_an_existing_cart_item_custom_attributes()
+    {
+        $testProduct = factory(TestProduct::class)->create();
+
+        TestProduct::addToCart($testProduct->id, 5, [
+            'tamaño' => '15X15',
+            'color' => 'blancoynegro'
+        ]);
+
+        TestProduct::addToCart($testProduct->id, 5, [
+            'tamaño' => '15X15',
+            'color' => 'blancoynegro'
+        ]);
+
+        TestProduct::addToCart($testProduct->id,2, [
+            'tamaño' => '15X15',
+            'color' => 'sepia'
+        ]);
+
+        TestProduct::addToCart($testProduct->id,1, [
+            'tamaño' => '15X15',
+            'color' => 'sepia'
+        ]);
+
+        $testProduct2 = factory(TestProduct::class)->create();
+
+        TestProduct::addToCart($testProduct2->id,4, [
+            'tamaño' => '15X15',
+            'color' => 'sepia'
+        ]);
+
+        TestProduct::addToCart($testProduct2->id,1, [
+            'tamaño' => '15X15',
+            'color' => 'sepia'
+        ]);
+
+        $cart = TestProduct::addToCart($testProduct2->id,3, [
+            'tamaño' => '15X15',
+            'color' => 'blancoynegro'
+        ]);
+
+
+        $this->assertCount(4, $cart['items']);
+        $this->assertSame(10, (int) $cart['items'][0]['quantity']);
+        $this->assertSame(3, (int) $cart['items'][1]['quantity']);
+        $this->assertSame(5, (int) $cart['items'][2]['quantity']);
+        $this->assertSame(3, (int) $cart['items'][3]['quantity']);
+    }
 }
