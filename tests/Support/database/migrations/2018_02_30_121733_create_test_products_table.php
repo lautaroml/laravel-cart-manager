@@ -17,6 +17,7 @@ class CreateTestProductsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->decimal('price')->unsigned();
+            $table->text('custom_attributes')->nullable();
             $table->timestamps();
         });
     }

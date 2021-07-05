@@ -22,6 +22,7 @@ class CreateCartItemsTable extends Migration
             $table->decimal('price', 8, 2);
             $table->string('image')->nullable();
             $table->integer('quantity')->unsigned();
+            $table->text('custom_attributes')->nullable();
             $table->timestamps();
         });
     }
