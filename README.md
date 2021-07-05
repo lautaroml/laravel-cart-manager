@@ -4,7 +4,7 @@
 [![StyleCI](https://styleci.io/repos/115199831/shield?branch=master)](https://styleci.io/repos/115199831)
 [![Buy us a tree](https://img.shields.io/badge/Buy%20me%20a%20tree-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://plant.treeware.earth/freshbitsweb/laravel-cart-manager)
 
-# Cart Manager (Laravel 5.5 to Laravel 8.x)
+# Added custom attributes for Cart Manager (Laravel 5.5 to Laravel 8.x)
 Let's make the cart management with Laravel a breeze.
 
 ## Just another shopping cart package?
